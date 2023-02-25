@@ -1,23 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-
-class User(AbstractUser):
-    '''
-    Model that represents a user in the database
-    '''
-    first_name = models.CharField(max_length=50, null=False, blank=False)
-    last_name = models.CharField(max_length=50, null=False, blank=False)
-    username = models.CharField(max_length=50, null=False, blank=False, unique=True)
-    email = models.EmailField(null=False, blank=False, unique=True)
-    password1 = models.CharField(max_length=25)
-    password2 = models.CharField(max_length=25)
-    birthday = models.DateField(null=False, blank=False)
-    verified = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f'{self.first_name}: {self.email}'
+from django.contrib.auth.models import User
 
 class Profile(models.Model):
     '''
@@ -64,7 +46,6 @@ class Profile(models.Model):
 
     def __str__(self):
         return f'{self.username}'
-
 class Account(models.Model):
     '''
     Model that represents a game account in the database

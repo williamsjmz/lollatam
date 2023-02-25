@@ -25,41 +25,15 @@
                     <h2 class="fw-bold">Bienvenido</h2>
                 </div>
             </div>
-            {% if error_messages %}
+            {% if form.errors  %}
             <div class="row mb-4 mb-lg-5" style="margin:0px !important;">
                 <div class="col-md-8 col-xl-6 text-center mx-auto">
-                    <div class="alert alert-danger" role="alert" style="margin:16px;">
-                        <ul style="text-align:left; margin:0px;">
-                            {% for error_message in error_messages %}
-                            <li>{{ error_message }}</li>
-                            {% endfor %}
-                        </ul>
+                    <div class="alert alert-warning" role="alert" style="margin:16px; float:center; text-align: left;">
+                        {{ form.errors }}
                     </div>
                 </div>
             </div>
             {% endif %}
-            {% if message %}
-            <div class="row mb-4 mb-lg-5" style="margin:0px !important;">
-                <div class="col-md-8 col-xl-6 text-center mx-auto">
-                    <div class="alert alert-warning" role="alert" style="margin:16px;">
-                        {{ message }}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-            {% if success_message %}
-            <div class="row mb-4 mb-lg-5" style="margin:0px !important;">
-                <div class="col-md-8 col-xl-6 text-center mx-auto">
-                    <div class="alert alert-success" role="alert">
-                        {{ success_message }}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-            SD
-            {{ form.errors }}
-            {{ form.non_field_errors }}
-            SD
             <div class="row d-flex justify-content-center">
                 <div class="col-md-6 col-xl-4">
                     <div class="card">
@@ -69,10 +43,9 @@
                                 </svg></div>
                             <form action="{% url 'users:signup' %}" method="post">
                                 {% csrf_token %}
+                                <div class="mb-3">{{ form.username }}</div>
                                 <div class="mb-3">{{ form.first_name }}</div>
                                 <div class="mb-3">{{ form.last_name }}</div>
-                                <div class="mb-3">{{ form.birthday }}</div>
-                                <div class="mb-3">{{ form.username }}</div>
                                 <div class="mb-3">{{ form.email }}</div>
                                 <div class="mb-3">{{ form.password1 }}</div>
                                 <div class="mb-3">{{ form.password2 }}</div>

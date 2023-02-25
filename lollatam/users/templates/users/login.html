@@ -24,15 +24,11 @@
                     <h2 class="fw-bold">Bienvenido de vuelta</h2>
                 </div>
             </div>
-            {% if error_messages %}
+            {% if error %}
             <div class="row mb-4 mb-lg-5" style="margin:0px !important;">
                 <div class="col-md-8 col-xl-6 text-center mx-auto">
-                    <div class="alert alert-danger" role="alert" style="margin:16px;">
-                        <ul style="text-align:left; margin:0px;">
-                            {% for error_message in error_messages %}
-                            <li>{{ error_message }}</li>
-                            {% endfor %}
-                        </ul>
+                    <div class="alert alert-warning" role="alert" style="margin:16px; float:center; text-align: left;">
+                        {{ error }}
                     </div>
                 </div>
             </div>
@@ -46,8 +42,8 @@
                                 </svg></div>
                             <form action="{% url 'users:login' %}" method="post">
                                 {% csrf_token %}
-                                <div class="mb-3"><input class="form-control" type="text" name="username" placeholder="Nombre de usuario"></div>
-                                <div class="mb-3"><input class="form-control" type="password" name="password" placeholder="Contraseña"></div>
+                                <div class="mb-3">{{ form.username }}</div>
+                                <div class="mb-3">{{ form.password }}</div>
                                 <div class="mb-3"><button class="btn btn-primary shadow d-block w-100" type="submit">Iniciar sesión</button></div>
                                 <p class="text-muted">Recuperar contraseña</p>
                             </form>
