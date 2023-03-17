@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+# Make email field unique for the User model.
+User._meta.get_field('email')._unique = True
+
 class Profile(models.Model):
     '''
     Model that represents a user profile in the databaseS
@@ -30,11 +33,13 @@ class Profile(models.Model):
         ('UY', 'Uruguay'),
         ('VE', 'Venezuela'),
     ]
+
     GENDERS = [
         ('F', 'Hombre'),
         ('M', 'Mujer'),
         ('O', 'Otro'),
     ]
+    
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile", null=False, blank=False)
     username = models.CharField(max_length=15, null=False, blank=False)
     country = models.CharField(max_length=2, choices=COUNTRIES, null=False, blank=False)
@@ -44,9 +49,14 @@ class Profile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Fields added for email verification functionality.
+    verification_token = models.CharField(max_length=64, null=True, blank=True)
+    email_verified = models.BooleanField(default=False)
+
     def __str__(self):
         return f'{self.username}'
-class Account(models.Model):
+
+class GameAccount(models.Model):
     '''
     Model that represents a game account in the database
     '''

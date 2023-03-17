@@ -53,6 +53,7 @@ class UserForm(UserCreationForm):
 	class Meta:
 		model = User
 		fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2' )
+
 class AuthForm(AuthenticationForm):
 	'''
 	Form that uses built-in AuthenticationForm to handel user auth
