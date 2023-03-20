@@ -51,7 +51,7 @@ class SignupViewTest(TestCase):
         # Test that a valid form submission creates a new user and logs them in
         response = self.client.post(self.signup_url, data=self.user_data)
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('network:profile'))
+        self.assertRedirects(response, reverse('search:index'))
         self.assertTrue(get_user_model().objects.filter(username='testuser').exists())
 
     def test_signup_form_invalid(self):
@@ -66,7 +66,7 @@ class SignupViewTest(TestCase):
         self.client.login(username='testuser1', password='testpass123')
         response = self.client.get(self.signup_url)
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('network:profile'))
+        self.assertRedirects(response, reverse('search:index'))
 
 class LoginTestCase(TestCase):
 
@@ -85,7 +85,7 @@ class LoginTestCase(TestCase):
     def test_valid_login(self):
         response = self.client.post(reverse('users:login'), {'username': 'testuser', 'password': 'testpass'})
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('network:profile'))
+        self.assertRedirects(response, reverse('search:index'))
         user = authenticate(username='testuser', password='testpass')
         self.assertIsNotNone(user)
         self.assertEqual(user, self.user)
@@ -101,7 +101,7 @@ class LoginTestCase(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(reverse('users:login'))
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('network:profile'))
+        self.assertRedirects(response, reverse('search:index'))
 
 class LogoutTestCase(TestCase):
     def setUp(self):
@@ -144,7 +144,7 @@ class VerifyEmailTestCase(TestCase):
         url = reverse('users:verify_email') + f'?token={self.profile.verification_token}'
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('network:profile'))
+        self.assertEqual(response.url, reverse('search:index'))
         self.profile.refresh_from_db()
         self.assertTrue(self.profile.email_verified)
         self.assertIsNone(self.profile.verification_token)
@@ -154,7 +154,7 @@ class VerifyEmailTestCase(TestCase):
         url = reverse('users:verify_email') + '?token=invalidtoken'
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('network:profile'))
+        self.assertEqual(response.url, reverse('search:index'))
         self.profile.refresh_from_db()
         self.assertFalse(self.profile.email_verified)
         self.assertEqual(self.profile.verification_token, 'testtoken')
@@ -164,7 +164,7 @@ class VerifyEmailTestCase(TestCase):
         url = reverse('users:verify_email')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('network:profile'))
+        self.assertEqual(response.url, reverse('search:index'))
         self.profile.refresh_from_db()
         self.assertFalse(self.profile.email_verified)
         self.assertEqual(self.profile.verification_token, 'testtoken')

@@ -6,14 +6,14 @@ from django.http import HttpResponseNotAllowed
 from users.models import Profile
 
 
-def profile(request):
+def index(request):
     if request.user.is_authenticated:
         if request.method == 'GET':
             profile = Profile.objects.get(user=request.user)
             context = {
                 'email_verified': profile.email_verified,
             }
-            return render(request, 'network/profile.html', context)
+            return render(request, 'search/index.html', context)
         else:
             return HttpResponseNotAllowed(['GET'])
     else:

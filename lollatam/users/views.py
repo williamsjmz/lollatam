@@ -17,7 +17,7 @@ import secrets
 def login_page(request):
 
     if request.user.is_authenticated:
-        return HttpResponseRedirect(reverse('network:profile'))
+        return HttpResponseRedirect(reverse('search:index'))
 
     if request.method == 'POST':
 
@@ -28,7 +28,7 @@ def login_page(request):
         
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse('network:profile'))
+            return HttpResponseRedirect(reverse('search:index'))
         else:
             return render(request, 'users/login.html', {
                 'form': AuthForm(request.POST),
@@ -48,7 +48,7 @@ def logout_page(request):
 def signup(request):
 
     if request.user.is_authenticated:
-        return HttpResponseRedirect(reverse('network:profile'))
+        return HttpResponseRedirect(reverse('search:index'))
 
     context = {}
 
@@ -79,7 +79,7 @@ def signup(request):
 
             login(request, user)
 
-            return HttpResponseRedirect(reverse('network:profile'))
+            return HttpResponseRedirect(reverse('search:index'))
         else:
             return render(request, 'users/signup.html', {'form': form})
 
@@ -102,4 +102,4 @@ def verify_email(request):
         except Profile.DoesNotExist:
             pass
 
-    return HttpResponseRedirect(reverse('network:profile'))
+    return HttpResponseRedirect(reverse('search:index'))
