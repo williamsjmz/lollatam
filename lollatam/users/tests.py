@@ -1,9 +1,10 @@
-from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.contrib.auth import get_user_model, authenticate, login, logout
+from django.test import TestCase, Client
 from django.urls import reverse
 
-from users.forms import UserForm
+from users.forms import UserForm, AuthForm
 from users.models import Profile, User
+
 
 class SignupViewTest(TestCase):
     def setUp(self):
@@ -66,3 +67,104 @@ class SignupViewTest(TestCase):
         response = self.client.get(self.signup_url)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('network:profile'))
+
+class LoginTestCase(TestCase):
+
+    def setUp(self):
+        self.username = 'testuser'
+        self.password = 'testpass'
+        self.user = User.objects.create_user(username=self.username, password=self.password)
+        self.profile = Profile.objects.create(user=self.user)
+
+    def test_get_login_page(self):
+        response = self.client.get(reverse('users:login'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'users/login.html')
+        self.assertIsInstance(response.context['form'], AuthForm)
+
+    def test_valid_login(self):
+        response = self.client.post(reverse('users:login'), {'username': 'testuser', 'password': 'testpass'})
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('network:profile'))
+        user = authenticate(username='testuser', password='testpass')
+        self.assertIsNotNone(user)
+        self.assertEqual(user, self.user)
+
+    def test_invalid_login(self):
+        response = self.client.post(reverse('users:login'), {'username': 'testuser', 'password': 'wrongpass'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'users/login.html')
+        self.assertIsInstance(response.context['form'], AuthForm)
+        self.assertContains(response, 'Las credenciales son inválidas.')
+
+    def test_authenticated_user_redirect(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('users:login'))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('network:profile'))
+
+class LogoutTestCase(TestCase):
+    def setUp(self):
+        self.username = 'testuser'
+        self.password = 'testpass'
+        self.user = User.objects.create_user(username=self.username, password=self.password)
+
+    def test_logout_redirects_to_login(self):
+        # Log in the user before accessing the logout page
+        self.client.login(username=self.username, password=self.password)
+        response = self.client.get(reverse('users:logout'))
+
+        # Assert that the response is a redirect to the login page
+        self.assertRedirects(response, reverse('users:login'))
+
+    def test_user_logged_out(self):
+        # Log in the user before accessing the logout page
+        self.client.login(username=self.username, password=self.password)
+        response = self.client.get(reverse('users:logout'))
+
+        # Assert that the user is logged out
+        self.assertFalse(response.wsgi_request.user.is_authenticated)
+
+class VerifyEmailTestCase(TestCase):
+    
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='testuser',
+            email='testuser@example.com',
+            password='testpass'
+        )
+        self.profile = Profile.objects.create(
+            user=self.user,
+            email_verified=False,
+            verification_token='testtoken'
+        )
+
+    def test_email_verified(self):
+        self.client.login(username='testuser', password='testpass')
+        url = reverse('users:verify_email') + f'?token={self.profile.verification_token}'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('network:profile'))
+        self.profile.refresh_from_db()
+        self.assertTrue(self.profile.email_verified)
+        self.assertIsNone(self.profile.verification_token)
+
+    def test_invalid_token(self):
+        self.client.login(username='testuser', password='testpass')
+        url = reverse('users:verify_email') + '?token=invalidtoken'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('network:profile'))
+        self.profile.refresh_from_db()
+        self.assertFalse(self.profile.email_verified)
+        self.assertEqual(self.profile.verification_token, 'testtoken')
+
+    def test_no_token(self):
+        self.client.login(username='testuser', password='testpass')
+        url = reverse('users:verify_email')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('network:profile'))
+        self.profile.refresh_from_db()
+        self.assertFalse(self.profile.email_verified)
+        self.assertEqual(self.profile.verification_token, 'testtoken')

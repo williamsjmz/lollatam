@@ -2,7 +2,7 @@ from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 
@@ -56,6 +56,7 @@ def signup(request):
 
         form = UserForm(request.POST)
 
+        # Check for form validation including username and email repeated.
         if form.is_valid():
             
             user = form.save()
@@ -80,7 +81,6 @@ def signup(request):
 
             return HttpResponseRedirect(reverse('network:profile'))
         else:
-            print('no valido')
             return render(request, 'users/signup.html', {'form': form})
 
     context['form'] = UserForm()
@@ -101,5 +101,5 @@ def verify_email(request):
             profile.save()
         except Profile.DoesNotExist:
             pass
-            
+
     return HttpResponseRedirect(reverse('network:profile'))

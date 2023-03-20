@@ -35,7 +35,7 @@ class Profile(models.Model):
     ]
 
     GENDERS = [
-        ('F', 'Hombre'),
+        ('H', 'Hombre'),
         ('M', 'Mujer'),
         ('O', 'Otro'),
     ]
