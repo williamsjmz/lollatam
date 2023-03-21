@@ -5,8 +5,6 @@ from django.http import HttpResponseNotAllowed
 
 from users.models import Profile
 
-from lollatam.secrets import RIOT_API_KEY
-
 
 def index(request):
 

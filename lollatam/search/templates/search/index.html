@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -12,10 +14,10 @@
       <form>
         <input type="text" id="summoner">
         <select id="server">
-          <option value="LAN">LAN</option>
-          <option value="LAS">LAS</option>
+          <option value="la1">LAN</option>
+          <option value="la2">LAS</option>
         </select>
-        <button id="search-btn">Buscar</button>
+        <button id="search-btn" type="button">Buscar</button>
       </form>
     {% else %}
       <p>
@@ -26,4 +28,7 @@
     {% endif %}
     
   </body>
+
+  <script src="{% static 'search/index.js' %}"></script>
+
 </html>
