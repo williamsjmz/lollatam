@@ -9,7 +9,14 @@
   <body>
 
     {% if email_verified %}
-      <p>Correo electrónico verificado.</p>
+      <form>
+        <input type="text" id="summoner">
+        <select id="server">
+          <option value="LAN">LAN</option>
+          <option value="LAS">LAS</option>
+        </select>
+        <button id="search-btn">Buscar</button>
+      </form>
     {% else %}
       <p>
         No has verificado tu cuenta de correo electrónico. Hemos enviado un enlace
