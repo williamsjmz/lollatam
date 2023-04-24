@@ -56,7 +56,7 @@ class UserForm(UserCreationForm):
 
 class AuthForm(AuthenticationForm):
 	'''
-	Form that uses built-in AuthenticationForm to handel user auth
+	Form that uses built-in AuthenticationForm to handle user auth
 	'''
 	username = forms.CharField(max_length=50, required=True,
 		widget=forms.TextInput(attrs={
